@@ -2,6 +2,8 @@ cc_library(
     name = "lib",
     deps = [
         "//arguments",
+        "//cluster",
+        "//node",
         "//popen",
         "//ssh",
         "//utils",
