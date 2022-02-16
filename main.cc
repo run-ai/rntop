@@ -1,3 +1,5 @@
+#include <unistd.h>
+
 #include <iostream>
 
 #include "arguments/arguments.h"
@@ -36,7 +38,17 @@ extern "C" int main(int argc, char * argv[])
 
     const auto cluster = Cluster(arguments.hostnames);
 
-    run(cluster);
+    while (true)
+    {
+        run(cluster);
+
+        if (arguments.interval <= 0)
+        {
+            break;
+        }
+
+        sleep(arguments.interval);
+    }
 
     return EXIT_SUCCESS;
 }
