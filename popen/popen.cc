@@ -1,6 +1,7 @@
 #include "popen/popen.h"
 
 #include <iostream>
+#include <sstream>
 
 namespace runai
 {
@@ -31,21 +32,30 @@ Popen::Popen(Popen && other) :
 
 std::string Popen::read()
 {
-    std::string output;
+    std::stringstream output;
 
     while (true)
     {
-        const auto c = fgetc(_f);
+        char buffer[100];
+        const auto n = fread(buffer, 1, sizeof(buffer), _f);
 
-        if (feof(_f))
+        if (n == 0)
         {
-            break;
+            if (feof(_f))
+            {
+                break;
+            }
+            else if (ferror(_f))
+            {
+                std::cerr << "Failed reading from pipe" << std::endl;
+                throw std::exception();
+            }
         }
 
-        output.push_back(c);
+        output << std::string_view(buffer, n);
     }
 
-    return output;
+    return output.str();
 }
 
 std::string Popen::execute(const std::string & command)
