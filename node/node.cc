@@ -1,6 +1,7 @@
 #include "node/node.h"
 
 #include <iostream>
+#include <utility>
 
 #include "ssh/ssh.h"
 #include "utils/utils.h"
@@ -8,13 +9,14 @@
 namespace runai
 {
 
-Node::Node(const std::string & hostname) :
-    _hostname(hostname)
+Node::Node(const std::string & hostname, std::unique_ptr<agent::Agent> && agent) :
+    _hostname(hostname),
+    _agent(std::move(agent))
 {}
 
 std::string Node::execute(const std::string & command) const
 {
-    return ssh::execute(_hostname, command);
+    return _agent->execute(command);
 }
 
 const std::string & Node::hostname() const

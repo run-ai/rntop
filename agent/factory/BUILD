@@ -1,10 +1,11 @@
 load("//:rules.bzl", "rntop_cc_auto_library")
 
 rntop_cc_auto_library(
-    name = "node",
+    name = "factory",
     deps = [
         "//agent/agent",
-        "//ssh",
-        "//utils",
+        "//agent/libssh",
+        "//agent/ssh",
+        "//agent/type",
     ],
 )

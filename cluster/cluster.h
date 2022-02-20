@@ -4,6 +4,7 @@
 #include <utility>
 #include <vector>
 
+#include "agent/factory/factory.h"
 #include "node/node.h"
 
 namespace runai
@@ -11,7 +12,7 @@ namespace runai
 
 struct Cluster
 {
-    Cluster(const std::vector<std::string> & hostnames);
+    Cluster(const std::vector<std::string> & hostnames, const std::string & username, const agent::Factory & factory);
 
     // getters
 

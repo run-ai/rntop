@@ -36,7 +36,7 @@ extern "C" int main(int argc, char * argv[])
 {
     const auto arguments = Arguments::parse(argc, argv);
 
-    const auto cluster = Cluster(arguments.hostnames);
+    const auto cluster = Cluster(arguments.hostnames, arguments.username, arguments.agent);
 
     while (true)
     {

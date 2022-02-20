@@ -1,6 +1,6 @@
 #include "ssh/ssh.h"
 
-#include <utility>
+#include <vector>
 
 #include "popen/popen.h"
 #include "utils/utils.h"
@@ -8,16 +8,24 @@
 namespace runai::ssh
 {
 
-std::string execute(const std::string & hostname, const std::string & command, bool strip)
+std::string execute(const std::string & hostname, const std::string & command)
 {
-    auto output = Popen::execute("ssh " + hostname + " " + command);
+    return execute(hostname, /* username */ "", command);
+}
 
-    if (strip)
+std::string execute(const std::string & hostname, const std::string & username, const std::string & command)
+{
+    auto components = std::vector<std::string> { "ssh", hostname };
+
+    if (!username.empty())
     {
-        output = utils::string::strip(std::move(output));
+        components.push_back("-l");
+        components.push_back(username);
     }
 
-    return output;
+    components.push_back(command);
+
+    return Popen::execute(utils::string::join(components, ' '));
 }
 
 } // namespace runai::ssh

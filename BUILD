@@ -1,17 +1,9 @@
-cc_library(
-    name = "lib",
+cc_binary(
+    name = "rntop",
+    srcs = ["main.cc"],
     deps = [
         "//arguments",
         "//cluster",
         "//node",
-        "//popen",
-        "//ssh",
-        "//utils",
-    ]
-)
-
-cc_binary(
-    name = "rntop",
-    srcs = ["main.cc"],
-    deps = [":lib"],
+    ],
 )

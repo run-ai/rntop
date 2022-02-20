@@ -12,6 +12,7 @@ namespace runai::utils
 namespace string
 {
 
+std::string join(const std::vector<std::string> & elements, char delimiter);
 std::vector<std::string> split(const std::string & str, char delimiter);
 std::string strip(std::string && str, const std::set<char> & chars = { '\r', '\n' });
 

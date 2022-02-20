@@ -6,6 +6,25 @@
 namespace runai::utils::string
 {
 
+std::string join(const std::vector<std::string> & elements, char delimiter)
+{
+    std::stringstream stream;
+
+    const auto count = static_cast<signed int>(elements.size());
+
+    for (int i = 0; i < count; ++i)
+    {
+        stream << elements.at(i);
+
+        if (i < count - 1)
+        {
+            stream << delimiter;
+        }
+    }
+
+    return stream.str();
+}
+
 std::vector<std::string> split(const std::string & str, char delimiter)
 {
     std::vector<std::string> elements;

@@ -1,14 +1,17 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
+
+#include "agent/agent/agent.h"
 
 namespace runai
 {
 
 struct Node
 {
-    Node(const std::string & hostname);
+    Node(const std::string & hostname, std::unique_ptr<agent::Agent> && agent);
 
     // getters
 
@@ -38,6 +41,7 @@ struct Node
 
  private:
     std::string _hostname;
+    std::unique_ptr<agent::Agent> _agent;
     mutable std::string _driver = {};
 };
 
