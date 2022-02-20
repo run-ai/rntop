@@ -2,6 +2,7 @@ FROM ubuntu:20.04
 
 RUN apt-get update && apt-get install -y \
     g++ \
+    libncurses5-dev \
     libssh-dev \
     openssh-client \
     python3 \
