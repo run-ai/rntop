@@ -29,6 +29,15 @@ const std::string & Node::driver() const
     if (_driver.empty())
     {
         _driver = execute("nvidia-smi --query-gpu=driver_version --format=csv,noheader,nounits");
+
+        // the output returns the same driver version for every available GPU;
+        // we therefore take only the first line.
+        const auto pos = _driver.find('\n');
+
+        if (pos != std::string::npos)
+        {
+            _driver = _driver.substr(0, pos);
+        }
     }
 
     return _driver;
