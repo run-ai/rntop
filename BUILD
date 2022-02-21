@@ -4,6 +4,7 @@ cc_binary(
     deps = [
         "//arguments",
         "//cluster",
-        "//node",
+        "//gui",
+        "//ncurses",
     ],
 )

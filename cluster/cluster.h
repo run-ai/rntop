@@ -17,7 +17,8 @@ struct Cluster
     // getters
 
     auto begin() const { return _nodes.begin(); }
-    auto end()  const  { return _nodes.end();   }
+    auto end()   const { return _nodes.end();   }
+    auto size()  const { return _nodes.size();  }
 
     // actions
 

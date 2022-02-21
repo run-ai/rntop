@@ -12,7 +12,7 @@ Arguments Arguments::parse(int argc, char * argv[])
     const auto usage = [=]()
         {
             std::cerr << "usage: " << argv[0] << " [-i --interval secs] [-l -u --username username] [--ssh] [--libssh] ...hostname" << std::endl;
-            std::cerr << "  -i --interval       Interval in seconds between updates" << std::endl;
+            std::cerr << "  -i --interval       Interval in seconds between updates; default: " << arguments.interval << std::endl;
             std::cerr << "  -l -u --username    Username for login" << std::endl;
             std::cerr << "  --ssh               Use 'ssh' command for remote execution" << std::endl;
             std::cerr << "  --libssh            Use libssh for remote execution (default)" << std::endl;
