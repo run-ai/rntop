@@ -14,6 +14,7 @@ struct Arguments
     int interval = 5;
     agent::Type agent = agent::Type::libssh;
     std::string username = "";
+    bool color = true;
 
     static Arguments parse(int argc, char * argv[]);
 };

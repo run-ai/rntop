@@ -11,12 +11,7 @@ struct Device
 {
     Device(int index, const std::string & name, const std::string & uuid);
 
-    struct Metric
-    {
-        size_t utilization;
-        size_t used_memory;
-        size_t total_memory;
-    };
+    using Metric = metric::Common<false>;
 
     // getters
 

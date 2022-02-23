@@ -11,7 +11,7 @@ namespace runai::gui
 
 struct App
 {
-    App(unsigned nodes);
+    App(unsigned nodes, bool color);
 
     void refresh(const Cluster & cluster);
 

@@ -5,6 +5,7 @@ rntop_cc_auto_library(
     deps = [
         "//cluster",
         "//gui/window",
+        "//ncurses/color",
         "//ncurses/session",
     ],
 )

@@ -18,17 +18,67 @@ Window::Window(int x, int y, int lines, int cols, const std::string & title) :
     refresh();
 }
 
+int Window::line() const
+{
+    return y(Y::Current) - 1;
+}
+
+void Window::print(const View & view)
+{
+    view.print(*this);
+}
+
+void Window::fillln(char ch)
+{
+    hline_(ch, -1);
+}
+
+void Window::moveln(int line)
+{
+    move(_offset, line + 1); // NOLINT(build/include_what_you_use)
+}
+
+void Window::nextln()
+{
+    moveln(line() + 1);
+}
+
+void Window::println(int line, const View & view)
+{
+    moveln(line);
+    println(view);
+}
+
+void Window::println(const View & view)
+{
+    print(view);
+    fillln();
+    nextln();
+}
+
 void Window::println(int line, const char * fmt, ...)
+{
+    moveln(line);
+
+    va_list args;
+    va_start(args, fmt);
+    vprintln(fmt, args);
+    va_end(args);
+}
+
+void Window::println(const char * fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
-
-    move(_offset, line + 1); // NOLINT(build/include_what_you_use)
-    vprint(fmt, args);
-    hline_(' ', -1);
-    refresh();
-
+    vprintln(fmt, args);
     va_end(args);
+}
+
+void Window::vprintln(const char * fmt, va_list args)
+{
+    vprint(fmt, args);
+    fillln();
+    nextln();
 }
 
 } // namespace runai::gui

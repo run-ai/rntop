@@ -14,12 +14,7 @@ struct Cluster
 {
     Cluster(const std::vector<std::string> & hostnames, const std::string & username, const agent::Factory & factory);
 
-    struct Metric
-    {
-        size_t utilization;
-        size_t used_memory;
-        size_t total_memory;
-    };
+    using Metric = metric::Common<true>;
 
     // queries
 
