@@ -1,0 +1,52 @@
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: runai/rntop:devel
+    steps:
+      - checkout
+      - run:
+          name: Lint
+          command: cpplint --recursive .
+      - run:
+          name: Build
+          command: bazel build :rntop -c opt
+      - store_artifacts:
+          path: bazel-bin/rntop
+          destination: rntop
+      - persist_to_workspace:
+          root: bazel-bin
+          paths:
+            - rntop
+  deploy:
+    docker:
+      - image: docker
+    steps:
+      - checkout
+      - attach_workspace:
+          at: bazel-bin
+      - setup_remote_docker
+      - run:
+          name: "Docker build and push"
+          command: |
+            TAG=${CIRCLE_TAG/v/''}
+            docker login --username circlecirunai --password $CIRCLECIRUNAI_DOCKERHUB_PASSWORD
+            docker build -f Dockerfile -t runai/rntop:$TAG -t runai/rntop:latest bazel-bin/
+            docker push runai/rntop:$TAG
+            docker push runai/rntop:latest
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only: /^v.*/
+      - deploy:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+          requires:
+            - build
