@@ -1,79 +1,89 @@
 #include "node/node.h"
 
-#include <iostream>
 #include <utility>
 
-#include "ssh/ssh.h"
 #include "utils/utils.h"
 
 namespace runai
 {
 
 Node::Node(const std::string & hostname, std::unique_ptr<agent::Agent> && agent) :
-    _hostname(hostname),
-    _agent(std::move(agent))
-{}
+    _agent(std::move(agent)),
+    _hostname(hostname)
+{
+    // retrieve initial information about the node such as the
+    // driver version and some information about its devices
+
+    for (const auto & values : query({ "driver_version", "index", "name", "uuid" }))
+    {
+        // overwriting '_driver' is fine because the same driver
+        // version is returned for every available GPU
+        _driver = values.at(0);
+
+        _devices.push_back(
+            {
+                .index = std::stoi(values.at(1)),
+                .name  = values.at(2),
+                .uuid  = values.at(3),
+            });
+    }
+}
 
 std::string Node::execute(const std::string & command) const
 {
     return _agent->execute(command);
 }
 
-const std::string & Node::hostname() const
+std::vector<std::vector<std::string>> Node::query(const std::vector<std::string> & queries) const
 {
-    return _hostname;
-}
+    auto result = std::vector<std::vector<std::string>> {};
 
-const std::string & Node::driver() const
-{
-    if (_driver.empty())
+    for (const auto & row : utils::string::split(execute("nvidia-smi --format=csv,noheader,nounits --query-gpu=" + utils::string::join(queries, ',')), '\n'))
     {
-        _driver = execute("nvidia-smi --query-gpu=driver_version --format=csv,noheader,nounits");
+        auto values = utils::string::split(row, ',');
 
-        // the output returns the same driver version for every available GPU;
-        // we therefore take only the first line.
-        const auto pos = _driver.find('\n');
-
-        if (pos != std::string::npos)
+        for (auto & value : values)
         {
-            _driver = _driver.substr(0, pos);
+            value = utils::string::strip(std::move(value));
         }
+
+        result.push_back(values);
     }
 
-    return _driver;
+    return result;
 }
 
-Node::Snapshot Node::snapshot() const
+void Node::refresh()
 {
-    decltype(Snapshot::devices) devices_;
+    auto metrics = std::vector<Device::Metric>();
 
-    for (const auto & row : utils::string::split(execute("nvidia-smi --query-gpu=utilization.gpu,memory.used,memory.total --format=csv,noheader,nounits"), '\n'))
+    for (const auto & row : query({ "utilization.gpu", "memory.used", "memory.total" }))
     {
-        const auto values = utils::string::split(row, ',');
-
-        if (values.size() != 3)
-        {
-            std::cerr << "Failed parsing nvidia-smi output" << std::endl;
-            throw std::exception();
-        }
-
-        devices_.push_back(
+        metrics.push_back(
             {
-                .utilization  = std::stoull(values.at(0)),
-                .used_memory  = std::stoull(values.at(1)),
-                .total_memory = std::stoull(values.at(2)),
+                .utilization  = std::stoull(row.at(0)),
+                .used_memory  = std::stoull(row.at(1)),
+                .total_memory = std::stoull(row.at(2)),
             });
     }
 
-    using Op = utils::Op<size_t, decltype(devices_)::value_type>;
+    // store device metrics
 
-    return Snapshot
+    for (unsigned i = 0; i < count(); ++i)
+    {
+        device(i).metric(metrics.at(i));
+    }
+
+    // calculate and store node metric
+
+    using Op = utils::Op<size_t, Device::Metric>;
+
+    _metric.store(
         {
-            .devices      = devices_,
-            .utilization  = utils::avg(devices_, (Op)[](const auto & device){ return device.utilization;  }),
-            .used_memory  = utils::sum(devices_, (Op)[](const auto & device){ return device.used_memory;  }),
-            .total_memory = utils::sum(devices_, (Op)[](const auto & device){ return device.total_memory; }),
-        };
+            .utilization  = utils::avg(metrics, (Op)[](const auto & metric){ return metric.utilization;  }),
+            .used_memory  = utils::sum(metrics, (Op)[](const auto & metric){ return metric.used_memory;  }),
+            .total_memory = utils::sum(metrics, (Op)[](const auto & metric){ return metric.total_memory; }),
+        });
 }
 
 } // namespace runai

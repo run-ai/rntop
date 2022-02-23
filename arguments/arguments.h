@@ -11,7 +11,7 @@ namespace runai
 struct Arguments
 {
     std::vector<std::string> hostnames = {};
-    unsigned interval = 5;
+    int interval = 5;
     agent::Type agent = agent::Type::libssh;
     std::string username = "";
 

@@ -13,24 +13,19 @@ Cluster::Cluster(const std::vector<std::string> & hostnames, const std::string &
     }
 }
 
-Cluster::Snapshot Cluster::snapshot() const
+void Cluster::refresh()
 {
-    decltype(Snapshot::nodes) nodes_;
+    using Op = utils::Op<size_t, Node>;
 
-    for (const auto & node : _nodes)
-    {
-        nodes_.push_back(std::make_pair(&node, node.snapshot()));
-    }
-
-    using Op = utils::Op<size_t, decltype(nodes_)::value_type>;
-
-    return Snapshot
+    _metric.store(
         {
-            .nodes        = nodes_,
-            .utilization  = utils::avg(nodes_, (Op)[](const auto & pair){ return pair.second.utilization;  }),
-            .used_memory  = utils::sum(nodes_, (Op)[](const auto & pair){ return pair.second.used_memory;  }),
-            .total_memory = utils::sum(nodes_, (Op)[](const auto & pair){ return pair.second.total_memory; }),
-        };
+            // TODO(raz): theoretically, a node metric can change while we are calculating the cluster metric.
+            //            we should consider copying the node metrics for the cluster metric to be coherent.
+
+            .utilization  = utils::avg(_nodes, (Op)[](const auto & node){ return node.metric().utilization;  }),
+            .used_memory  = utils::sum(_nodes, (Op)[](const auto & node){ return node.metric().used_memory;  }),
+            .total_memory = utils::sum(_nodes, (Op)[](const auto & node){ return node.metric().total_memory; }),
+        });
 }
 
 } // namespace runai

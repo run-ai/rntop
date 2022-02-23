@@ -13,7 +13,7 @@ struct App
 {
     App(unsigned nodes);
 
-    void update(const Cluster::Snapshot & snapshot);
+    void refresh(const Cluster & cluster);
 
  private:
     ncurses::Session _ncurses;

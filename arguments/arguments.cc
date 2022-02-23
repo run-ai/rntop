@@ -49,11 +49,17 @@ Arguments Arguments::parse(int argc, char * argv[])
 
             try
             {
-                arguments.interval = std::stoul(arg);
+                arguments.interval = std::stoi(arg);
             }
             catch (const std::exception &)
             {
                 usage();
+            }
+
+            if (arguments.interval <= 0)
+            {
+                std::cerr << "Interval must be greater than 0" << std::endl;
+                exit(EXIT_FAILURE);
             }
         }
         else if (arg == "-l" || arg == "-u" || arg == "--username")

@@ -5,6 +5,7 @@ cc_binary(
         "//arguments",
         "//cluster",
         "//gui",
-        "//ncurses",
+        "//ncurses", # de-facto for '-lncurses'
+        "//thread",
     ],
 )
