@@ -9,7 +9,18 @@ Cluster::Cluster(const std::vector<std::string> & hostnames, const std::string &
 {
     for (const auto & hostname : hostnames)
     {
-        _nodes.emplace_back(hostname, factory.create(hostname, username));
+        auto hostname_ = hostname;
+        auto username_ = username;
+
+        const auto split = utils::string::split(hostname, '@');
+
+        if (split.size() == 2)
+        {
+            username_ = split.at(0);
+            hostname_ = split.at(1);
+        }
+
+        _nodes.emplace_back(hostname_, factory.create(hostname_, username_));
     }
 }
 
