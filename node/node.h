@@ -22,6 +22,8 @@ struct Node
     const std::string & hostname() const { return _hostname; }
     const std::string & driver()   const { return _driver;   }
 
+    unsigned gpus() const { return _devices.size(); }
+
     Metric metric() const { return _metric; }
 
     // access

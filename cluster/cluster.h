@@ -6,6 +6,7 @@
 #include "agent/factory/factory.h"
 #include "metric/metric.h"
 #include "node/node.h"
+#include "utils/utils.h"
 
 namespace runai
 {
@@ -17,6 +18,9 @@ struct Cluster
     using Metric = metric::Common<true>;
 
     // queries
+
+    unsigned nodes() const { return _nodes.size(); }
+    unsigned gpus() const { return utils::sum(_nodes, (utils::Op<unsigned, Node>)[](const Node & node){ return node.gpus(); }); }
 
     Metric metric() const { return _metric; }
 

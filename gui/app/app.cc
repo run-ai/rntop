@@ -7,11 +7,11 @@
 namespace runai::gui
 {
 
-App::App(unsigned nodes, bool color) :
+App::App(unsigned nodes, unsigned gpus, bool color) :
     _ncurses(),
     _cluster(0, 0, 1, 0, "Cluster"),
     _nodes(0, _cluster.y(decltype(_cluster)::Y::End), nodes, 0, "Nodes"),
-    _gpus(0, _nodes.y(decltype(_nodes)::Y::End), 0, 0, "GPUs")
+    _gpus(0, _nodes.y(decltype(_nodes)::Y::End), gpus, 0, "GPUs")
 {
     curs_set(0); // make the cursor invisible
 
