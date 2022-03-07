@@ -38,8 +38,33 @@ Here are some examples of commands (`...` is used for simplification):
 
 ## Troubleshooting
 ### SSH
+The next steps should guide you in how to troubleshoot `rntop` in case it fails connecting to some machine.
+For the sake of the explanation let's assume you are using the credentials `user@machine`.
+
+First, verify that the credentials are correct by running the following command:
+```
+ssh user@machine nvidia-smi
+```
+
+If this does _not_ work then the credentials that you are using might be wrong or you don't have a proper SSH key to connect using these credentials.
+
+If this works it means that the credentials are correct and for some reason it's either the container that can't connect to the machine or it's the `rntop` application itself.
+
+Let's check if we pass all the SSH keys and configuration correctly to the container by running the following command:
+```
+docker run -it --rm -v $HOME/.ssh:/root/.ssh --entrypoint bash runai/rntop -c "ssh user@machine nvidia-smi"
+```
+
+If this does _not_ work then you might be using an SSH agent or macOS Keychain.
+Try adding one of the following to the `rntop` command depending on the OS of your machine:
+* Linux: `-v $SSH_AUTH_SOCK:$SSH_AUTH_SOCK -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK`
+* macOS: `-v /run/host-services/ssh-auth.sock:/ssh-agent -e SSH_AUTH_SOCK=/ssh-agent`
+
+If the command above _did_ work then it means that the container can connect to the machine and it's the `rntop` application itself that can't.
+
 `rntop` uses [libssh](https://www.libssh.org/) for the SSH connections by default.
-If you are encountering SSH connection problems try using the native `ssh` agent by passing the argument `--ssh` to the `rntop` command.
+There is some chance that this library does not support your setup.
+Therefore, try using the native `ssh` executable as a communication agent by passing the argument `--ssh` to the `rntop` command.
 
 ### Bugs
 Please open a [GitHub issue](https://github.com/run-ai/rntop/issues) in case you encounter a bug.
