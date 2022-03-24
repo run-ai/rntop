@@ -5,5 +5,7 @@ rntop_cc_auto_library(
     deps = [
         "//gui/window",
         "//mutex",
+        "//unit",
+        "//utils",
     ],
 )

@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 
+#include "unit/unit.h"
+
 namespace runai::utils
 {
 
@@ -17,6 +19,16 @@ std::vector<std::string> split(const std::string & str, char delimiter);
 std::string strip(std::string && str, const std::set<char> & chars = { ' ', '\r', '\n' });
 
 } // namespace string
+
+namespace unit
+{
+
+std::string symbol(Unit unit);
+double convert(double x, Unit from, Unit to);
+size_t to_bytes(double x, Unit from);
+double bytes_to(size_t x, Unit to);
+
+} // namespace unit
 
 template <typename R, typename T>
 using Op = std::function<R(const T &)>;

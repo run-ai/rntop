@@ -4,6 +4,10 @@
 
 #include "gui/window/window.h"
 
+#include "unit/unit.h"
+
+#include "utils/utils.h"
+
 namespace runai
 {
 
@@ -47,10 +51,11 @@ struct Common : gui::View
 {
     Common() = default; // empty creation
 
-    Common(size_t utilization, size_t used_memory, size_t total_memory) :
+    Common(size_t utilization, double used_memory, double total_memory, Unit unit) :
         utilization(utilization),
         used_memory(used_memory),
-        total_memory(total_memory)
+        total_memory(total_memory),
+        unit(unit)
     {}
 
     void print(gui::Window & window) const override
@@ -60,7 +65,7 @@ struct Common : gui::View
             utilization >= 80 ? ncurses::Color::Green :
                                 ncurses::Color::Cyan;
 
-        const auto used_memory_percentage = static_cast<float>(used_memory) / static_cast<float>(total_memory) * 100.f;
+        const auto used_memory_percentage = used_memory / total_memory * 100.f;
 
         const auto memory_color = Color == false ? ncurses::Color::None :
             used_memory_percentage < 50  ? ncurses::Color::Red   :
@@ -69,12 +74,40 @@ struct Common : gui::View
 
         window.print(utilization_color, "GPU utilization: %3d%%", utilization);
         window.print("    ");
-        window.print(memory_color, "Used GPU memory: %5d MiB / %-5d MiB (%.0f%%)", used_memory, total_memory, used_memory_percentage);
+
+        const auto symbol = utils::unit::symbol(unit);
+
+        if (unit < Unit::GB)
+        {
+            window.print(memory_color, "Used GPU memory: %5d %s / %-5d %s (%.0f%%)",
+                static_cast<size_t>(used_memory), symbol.c_str(),
+                static_cast<size_t>(total_memory), symbol.c_str(),
+                used_memory_percentage);
+        }
+        else
+        {
+            window.print(memory_color, "Used GPU memory: %.2f %s / %-.2f %s (%.0f%%)",
+                used_memory, symbol.c_str(),
+                total_memory, symbol.c_str(),
+                used_memory_percentage);
+        }
+    }
+
+    Common convert(Unit to)
+    {
+        return Common
+            {
+                .utilization = utilization,
+                .used_memory = utils::unit::convert(used_memory, unit, to),
+                .total_memory = utils::unit::convert(total_memory, unit, to),
+                .unit = to,
+            };
     }
 
     size_t utilization = {};
-    size_t used_memory = {};
-    size_t total_memory = {};
+    double used_memory = {};
+    double total_memory = {};
+    Unit unit;
 };
 
 } // namespace metric

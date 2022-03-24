@@ -26,16 +26,15 @@ Cluster::Cluster(const std::vector<std::string> & hostnames, const std::string &
 
 void Cluster::refresh()
 {
-    using Op = utils::Op<size_t, Node>;
-
     _metric.store(
         {
             // TODO(raz): theoretically, a node metric can change while we are calculating the cluster metric.
             //            we should consider copying the node metrics for the cluster metric to be coherent.
 
-            .utilization  = utils::avg(_nodes, (Op)[](const auto & node){ return node.metric().utilization;  }),
-            .used_memory  = utils::sum(_nodes, (Op)[](const auto & node){ return node.metric().used_memory;  }),
-            .total_memory = utils::sum(_nodes, (Op)[](const auto & node){ return node.metric().total_memory; }),
+            .utilization  = utils::avg(_nodes, (utils::Op<size_t, Node>)[](const auto & node){ return node.metric().utilization;  }),
+            .used_memory  = utils::sum(_nodes, (utils::Op<double, Node>)[](const auto & node){ return node.metric().used_memory;  }),
+            .total_memory = utils::sum(_nodes, (utils::Op<double, Node>)[](const auto & node){ return node.metric().total_memory; }),
+            .unit         = Unit::MiB,
         });
 }
 

@@ -1,5 +1,6 @@
 #include "node/node.h"
 
+#include <string>
 #include <utility>
 
 #include "utils/utils.h"
@@ -62,8 +63,9 @@ void Node::refresh()
         metrics.push_back(
             {
                 .utilization  = std::stoull(row.at(0)),
-                .used_memory  = std::stoull(row.at(1)),
-                .total_memory = std::stoull(row.at(2)),
+                .used_memory  = std::stod(row.at(1)),
+                .total_memory = std::stod(row.at(2)),
+                .unit         = Unit::MiB,
             });
     }
 
@@ -76,13 +78,12 @@ void Node::refresh()
 
     // calculate and store node metric
 
-    using Op = utils::Op<size_t, Device::Metric>;
-
     _metric.store(
         {
-            .utilization  = utils::avg(metrics, (Op)[](const auto & metric){ return metric.utilization;  }),
-            .used_memory  = utils::sum(metrics, (Op)[](const auto & metric){ return metric.used_memory;  }),
-            .total_memory = utils::sum(metrics, (Op)[](const auto & metric){ return metric.total_memory; }),
+            .utilization  = utils::avg(metrics, (utils::Op<size_t, Device::Metric>)[](const auto & metric){ return metric.utilization;  }),
+            .used_memory  = utils::sum(metrics, (utils::Op<double, Device::Metric>)[](const auto & metric){ return metric.used_memory;  }),
+            .total_memory = utils::sum(metrics, (utils::Op<double, Device::Metric>)[](const auto & metric){ return metric.total_memory; }),
+            .unit         = Unit::MiB,
         });
 }
 

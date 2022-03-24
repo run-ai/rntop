@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "agent/type/type.h"
+#include "unit/unit.h"
 
 namespace runai
 {
@@ -15,6 +16,7 @@ struct Arguments
     agent::Type agent = agent::Type::libssh;
     std::string username = "";
     bool color = true;
+    Unit unit = Unit::MiB;
 
     // information to show about GPU
     bool gpu_index = true;

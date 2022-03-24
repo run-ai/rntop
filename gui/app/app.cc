@@ -28,12 +28,12 @@ void App::refresh(const Cluster & cluster)
     _nodes.moveln(0);
     _gpus.moveln(0);
 
-    _cluster.println(cluster.metric());
+    _cluster.println(cluster.metric().convert(_arguments.unit));
 
     for (const auto & node : cluster)
     {
         _nodes.print("%-25s %-11s\t", node.hostname().c_str(), node.driver().c_str());
-        _nodes.println(node.metric());
+        _nodes.println(node.metric().convert(_arguments.unit));
 
         for (const auto & device : node)
         {
@@ -55,7 +55,7 @@ void App::refresh(const Cluster & cluster)
             }
 
             _gpus.print("\t");
-            _gpus.println(device.metric());
+            _gpus.println(device.metric().convert(_arguments.unit));
         }
     }
 
