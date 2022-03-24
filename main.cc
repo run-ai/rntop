@@ -17,7 +17,7 @@ extern "C" int main(int argc, char * argv[])
     auto cluster = Cluster(arguments.hostnames, arguments.username, arguments.agent);
 
     // start the GUI application
-    auto app = gui::App(cluster.nodes(), cluster.gpus(), arguments.color);
+    auto app = gui::App(cluster.nodes(), cluster.gpus(), arguments);
 
     // now we are going to launch threads for updating metrics
     auto watchers = std::vector<Thread>();

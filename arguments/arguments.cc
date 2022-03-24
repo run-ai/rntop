@@ -17,6 +17,10 @@ Arguments Arguments::parse(int argc, char * argv[])
             std::cerr << "  -l -u --username    Username for login" << std::endl;
             std::cerr << "  --ssh               Use 'ssh' command for remote execution" << std::endl;
             std::cerr << "  --libssh            Use libssh for remote execution (default)" << std::endl;
+            std::cerr << "\nInformation about GPU:" << std::endl;
+            std::cerr << " --[no-]gpu-index     Zero based index of the GPU; default: " << arguments.gpu_index << std::endl;
+            std::cerr << " --[no-]gpu-name      The official product name of the GPU; default: " << arguments.gpu_name << std::endl;
+            std::cerr << " --[no-]gpu-uuid      UUID of the GPU; default: " << arguments.gpu_uuid << std::endl;
             exit(EXIT_FAILURE);
         };
 
@@ -82,6 +86,18 @@ Arguments Arguments::parse(int argc, char * argv[])
         else if (arg == "--libssh")
         {
             arguments.agent = decltype(arguments.agent)::libssh;
+        }
+        else if (arg == "--gpu-index" || arg == "--no-gpu-index")
+        {
+            arguments.gpu_index = arg == "--gpu-index";
+        }
+        else if (arg == "--gpu-name" || arg == "--no-gpu-name")
+        {
+            arguments.gpu_name = arg == "--gpu-name";
+        }
+        else if (arg == "--gpu-uuid" || arg == "--no-gpu-uuid")
+        {
+            arguments.gpu_uuid = arg == "--gpu-uuid";
         }
         else if (arg.front() == '-') // unrecognized flag
         {
