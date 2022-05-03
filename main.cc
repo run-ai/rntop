@@ -2,6 +2,7 @@
 
 #include "arguments/arguments.h"
 #include "cluster/cluster.h"
+#include "logger/logger.h"
 #include "thread/thread.h"
 
 #include "gui/app/app.h"
@@ -12,6 +13,9 @@ namespace runai
 extern "C" int main(int argc, char * argv[])
 {
     const auto arguments = Arguments::parse(argc, argv);
+
+    // initialize the output file
+    Logger::init(arguments.output);
 
     // connect to all the nodes in the cluster and gather the initial information
     auto cluster = Cluster(arguments.hostnames, arguments.username, arguments.agent);

@@ -3,6 +3,7 @@
 #include <string>
 #include <utility>
 
+#include "logger/logger.h"
 #include "utils/utils.h"
 
 namespace runai
@@ -58,22 +59,30 @@ void Node::refresh()
 {
     auto metrics = std::vector<Device::Metric>();
 
-    for (const auto & row : query({ "utilization.gpu", "memory.used", "memory.total" }))
+    const auto rows = query({ "timestamp", "utilization.gpu", "memory.used", "memory.total" });
+
+    for (unsigned index = 0; index < rows.size(); ++index)
     {
-        metrics.push_back(
+        const auto & row = rows.at(index);
+
+        const auto timestamp = row.at(0); // YYYY/MM/DD HH:MM:SS.msec
+
+        const auto metric = Device::Metric
             {
-                .utilization  = std::stoull(row.at(0)),
-                .used_memory  = std::stod(row.at(1)),
-                .total_memory = std::stod(row.at(2)),
+                .utilization  = std::stoull(row.at(1)),
+                .used_memory  = std::stod(row.at(2)),
+                .total_memory = std::stod(row.at(3)),
                 .unit         = Unit::MiB,
-            });
-    }
+            };
 
-    // store device metrics
+        // log metric to file
+        Logger::log(timestamp, hostname(), index, metric.utilization, metric.used_memory, metric.total_memory);
 
-    for (unsigned i = 0; i < count(); ++i)
-    {
-        device(i).metric(metrics.at(i));
+        // store device metric
+        device(index).metric(metric);
+
+        // keep for agregate information
+        metrics.push_back(metric);
     }
 
     // calculate and store node metric

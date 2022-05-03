@@ -17,6 +17,7 @@ struct Arguments
     std::string username = "";
     bool color = true;
     Unit unit = Unit::MiB;
+    std::string output = "";
 
     // information to show about GPU
     bool gpu_index = true;
