@@ -13,7 +13,9 @@ namespace runai
 
 struct Cluster
 {
-    Cluster(const std::vector<std::string> & hostnames, const std::string & username, const agent::Factory & factory);
+    using Config = Node::Config;
+
+    Cluster(const std::vector<std::string> & hostnames, const std::string & username, const agent::Factory & factory, const Config & config);
 
     using Metric = metric::Common<true>;
 

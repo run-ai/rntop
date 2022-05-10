@@ -5,7 +5,7 @@
 namespace runai
 {
 
-Cluster::Cluster(const std::vector<std::string> & hostnames, const std::string & username, const agent::Factory & factory)
+Cluster::Cluster(const std::vector<std::string> & hostnames, const std::string & username, const agent::Factory & factory, const Config & config)
 {
     for (const auto & hostname : hostnames)
     {
@@ -20,7 +20,7 @@ Cluster::Cluster(const std::vector<std::string> & hostnames, const std::string &
             hostname_ = split.at(1);
         }
 
-        _nodes.emplace_back(hostname_, factory.create(hostname_, username_));
+        _nodes.emplace_back(hostname_, factory.create(hostname_, username_), config);
     }
 }
 

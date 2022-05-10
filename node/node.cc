@@ -9,7 +9,8 @@
 namespace runai
 {
 
-Node::Node(const std::string & hostname, std::unique_ptr<agent::Agent> && agent) :
+Node::Node(const std::string & hostname, std::unique_ptr<agent::Agent> && agent, const Config & config) :
+    _config(config),
     _agent(std::move(agent)),
     _hostname(hostname)
 {
@@ -57,6 +58,8 @@ std::vector<std::vector<std::string>> Node::query(const std::vector<std::string>
 
 void Node::refresh()
 {
+    const auto log = _log();
+
     auto metrics = std::vector<Device::Metric>();
 
     const auto rows = query({ "timestamp", "utilization.gpu", "memory.used", "memory.total" });
@@ -75,8 +78,10 @@ void Node::refresh()
                 .unit         = Unit::MiB,
             };
 
-        // log metric to file
-        Logger::log(timestamp, hostname(), index, metric.utilization, metric.used_memory, metric.total_memory);
+        if (log) // log metric to file if needed
+        {
+            Logger::log(timestamp, hostname(), index, metric.utilization, metric.used_memory, metric.total_memory);
+        }
 
         // store device metric
         device(index).metric(metric);
@@ -94,6 +99,17 @@ void Node::refresh()
             .total_memory = utils::sum(metrics, (utils::Op<double, Device::Metric>)[](const auto & metric){ return metric.total_memory; }),
             .unit         = Unit::MiB,
         });
+}
+
+bool Node::_log()
+{
+    if (_refreshes++ % _config.output_every == 0)
+    {
+        _refreshes = 1;
+        return true;
+    }
+
+    return false;
 }
 
 } // namespace runai
