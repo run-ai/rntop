@@ -13,8 +13,10 @@ Arguments Arguments::parse(int argc, char * argv[])
         {
             std::cerr << "usage: " << argv[0] << " [-i --interval secs] [-l -u --username username] [--ssh] [--libssh] ...hostname" << std::endl;
             std::cerr << "\nSettings:" << std::endl;
-            std::cerr << "  -i --interval       Interval in seconds between updates; default: " << arguments.interval << std::endl;
+            std::cerr << "  -i --interval       Interval in seconds between refreshes; default: " << arguments.interval << std::endl;
             std::cerr << "  -l -u --username    Username for login" << std::endl;
+            std::cerr << "  -o --output         Output file" << std::endl;
+            std::cerr << "  --output-every      Save output to file after this amount of refreshes; default: " << arguments.output_every << std::endl;
             std::cerr << "  --ssh               Use 'ssh' command for remote execution" << std::endl;
             std::cerr << "  --libssh            Use libssh for remote execution (default)" << std::endl;
             std::cerr << "\nGUI:" << std::endl;
@@ -47,22 +49,27 @@ Arguments Arguments::parse(int argc, char * argv[])
                 return arg;
             };
 
+        const auto shift_i = [&]() -> int
+            {
+                shift();
+
+                try
+                {
+                    return std::stoi(arg);
+                }
+                catch(const std::exception & e)
+                {
+                    usage();
+                }
+            };
+
         if (arg == "-h" || arg == "--help")
         {
             usage();
         }
         else if (arg == "-i" || arg == "--interval")
         {
-            shift();
-
-            try
-            {
-                arguments.interval = std::stoi(arg);
-            }
-            catch (const std::exception &)
-            {
-                usage();
-            }
+            arguments.interval = shift_i();
 
             if (arguments.interval <= 0)
             {
@@ -73,6 +80,20 @@ Arguments Arguments::parse(int argc, char * argv[])
         else if (arg == "-l" || arg == "-u" || arg == "--username")
         {
             arguments.username = shift();
+        }
+        else if (arg == "-o" || arg == "--output")
+        {
+            arguments.output = shift();
+        }
+        else if (arg == "--output-every")
+        {
+            arguments.output_every = shift_i();
+
+            if (arguments.output_every <= 0)
+            {
+                std::cerr << "'--output-every' must be greater than 0" << std::endl;
+                exit(EXIT_FAILURE);
+            }
         }
         else if (arg == "--ssh")
         {

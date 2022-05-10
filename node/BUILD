@@ -5,6 +5,7 @@ rntop_cc_auto_library(
     deps = [
         "//agent/agent",
         "//device",
+        "//logger",
         "//metric",
         "//ssh",
         "//utils",

@@ -1,6 +1,10 @@
 # rntop
 A top-like tool for monitoring GPUs across a cluster.
 
+## Board for `rntop`
+`rntop` can [save](#output-file) information to an output file.
+Afterwards, you can go to [Board for rntop](https://run-ai.github.io/rntop-board), load this file and see an analysis of the information recorded by `rntop` over time like GPU utilization across the cluster and more.
+
 ## Installation
 Running `runtop` is possible with [Docker](https://docs.docker.com/get-docker/).
 
@@ -28,6 +32,21 @@ If you are using the same username for all machines pass it as the argument `--u
 If you are using different usernames for different machines you can pass them as part of the hostname (e.g. `john@server`).
 
 Note that we mount the SSH directory from the host to the container so that it would be able to use the SSH configuration file and keys to establish the SSH connections.
+
+#### Output file
+`rntop` can save metrics to a file.
+
+> You can then open this with [Board for rntop](#board-for-rntop) to visualize the exported information such as cluster utilization and memory usage.
+
+This is possible by specifying a path with the argument `--output`.
+`rntop` would create the file if it does not already exist and append to it if it exists because of previous runs.
+
+Make sure the file is accessible from the host so that you will be able to upload it easily.
+
+You can use the following command and replace the `...` placeholder with the machine hostnames or IPs:
+```
+docker run -it --rm -v $HOME/.ssh:/root/.ssh -v $HOME/.rntop:/host runai/rntop --output /host/rntop.log ...
+```
 
 #### Examples
 Here are some examples of commands (`...` is used for simplification):

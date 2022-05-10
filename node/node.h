@@ -13,7 +13,12 @@ namespace runai
 
 struct Node
 {
-    Node(const std::string & hostname, std::unique_ptr<agent::Agent> && agent);
+    struct Config
+    {
+        int output_every;
+    };
+
+    Node(const std::string & hostname, std::unique_ptr<agent::Agent> && agent, const Config & config);
 
     using Metric = metric::Common<false>;
 
@@ -51,11 +56,15 @@ struct Node
     void refresh();
 
  private:
+    bool _log();
+
+    Config _config;
     std::unique_ptr<agent::Agent> _agent;
     std::string _hostname;
     std::string _driver = "N/A";
     std::vector<Device> _devices;
     runai::Metric<Metric> _metric = {};
+    int _refreshes = 0;
 };
 
 } // namespace runai
