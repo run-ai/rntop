@@ -48,6 +48,30 @@ You can use the following command and replace the `...` placeholder with the mac
 docker run -it --rm -v $HOME/.ssh:/root/.ssh -v $HOME/.rntop:/host runai/rntop --output /host/rntop.log ...
 ```
 
+#### Running as a daemon
+When [saving](#output-file) information to an output file, one might want to run `rntop` for long periods of time, like days and even weeks.
+To do so, `rntop` should not be attached to a specific terminal session, so that it would continue running when the session exits.
+
+We recommend to use [tmux](https://github.com/tmux/tmux/wiki) for this.
+
+Make sure you are running on a machine that would not shutdown, restart or hybernate.
+A personal laptop is _not_ a good choice.
+
+Here is an example of how to use `tmux` for running `rntop` in the background:
+1. Create a new tmux session and name it `rntop` with the command:
+```
+tmux new -s rntop
+```
+2. [Run](#execution) `rntop` and [save](#output-file) an output file.
+
+>Make sure you save the output file to a directory that is accessible from the host.
+
+3. You can detach from the session with `Ctrl-b` + `d`
+4. Then reattach after some time with the command:
+```
+tmux attach-session -t rntop
+```
+
 #### Examples
 Here are some examples of commands (`...` is used for simplification):
 1. `docker run ... runai/rntop john@192.168.1.60`
