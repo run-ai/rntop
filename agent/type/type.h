@@ -7,6 +7,7 @@ enum class Type
 {
     SSH,
     libssh,
+    Local,
 };
 
 } // namespace runai::agent

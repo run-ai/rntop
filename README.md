@@ -33,6 +33,9 @@ If you are using different usernames for different machines you can pass them as
 
 Note that we mount the SSH directory from the host to the container so that it would be able to use the SSH configuration file and keys to establish the SSH connections.
 
+#### Running locally
+If you are using local execution, make sure that the container is accessisble to GPUs by adding `--gpus all` to the `docker run` command.
+
 #### Output file
 `rntop` can save metrics to a file.
 
@@ -80,6 +83,9 @@ Here are some examples of commands (`...` is used for simplification):
 > Pass `--help` to see all the available arguments.
 
 ## Troubleshooting
+### Local
+If you are having trouble running with local execution, try adding `--entrypoint bash` to the `docker run` command and then execute `nvidia-smi`.
+
 ### SSH
 The next steps should guide you in how to troubleshoot `rntop` in case it fails connecting to some machine.
 For the sake of the explanation let's assume you are using the credentials `user@machine`.
