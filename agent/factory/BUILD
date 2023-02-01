@@ -5,6 +5,7 @@ rntop_cc_auto_library(
     deps = [
         "//agent/agent",
         "//agent/libssh",
+        "//agent/local",
         "//agent/ssh",
         "//agent/type",
     ],

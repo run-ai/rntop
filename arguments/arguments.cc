@@ -19,6 +19,7 @@ Arguments Arguments::parse(int argc, char * argv[])
             std::cerr << "  --output-every      Save output to file after this amount of refreshes; default: " << arguments.output_every << std::endl;
             std::cerr << "  --ssh               Use 'ssh' command for remote execution" << std::endl;
             std::cerr << "  --libssh            Use libssh for remote execution (default)" << std::endl;
+            std::cerr << "  --local             Execute locally" << std::endl;
             std::cerr << "\nGUI:" << std::endl;
             std::cerr << "  --mb --mib --gb --gib   Unit for memory metrics" << std::endl;
             std::cerr << "  --[no-]color            Use colors; default: " << arguments.color << std::endl;
@@ -102,6 +103,10 @@ Arguments Arguments::parse(int argc, char * argv[])
         else if (arg == "--libssh")
         {
             arguments.agent = decltype(arguments.agent)::libssh;
+        }
+        else if (arg == "--local")
+        {
+            arguments.agent = decltype(arguments.agent)::Local;
         }
         else if (arg == "--mb") { arguments.unit = Unit::MB; }
         else if (arg == "--mib") { arguments.unit = Unit::MiB; }
