@@ -1,4 +1,6 @@
 # rntop
+[![Join the community at (https://discord.gg/zN3Q9pQAuT)](https://img.shields.io/badge/Discord-genv-7289da?logo=discord)](https://discord.gg/zN3Q9pQAuT)
+
 A top-like tool for monitoring GPUs across a cluster.
 
 ## Board for `rntop`
@@ -81,6 +83,18 @@ Here are some examples of commands (`...` is used for simplification):
 2. `docker run ... runai/rntop --username john 192.168.1.60 192.168.1.61 rob@192.168.1.62`
 
 > Pass `--help` to see all the available arguments.
+
+## Join us in the AI Infrastructure Club!
+
+[<img src="https://img.shields.io/badge/Discord-Join%20the%20community!-7289da?style=for-the-badge&logo=discord&logoColor=7289da" height="30" />](https://discord.gg/zN3Q9pQAuT)
+
+Looking for a place to discuss best practices, discover new tools, and exchange ideas about how to make the most out of our GPUs without losing time? Join the Discord server with the creators of [Genv](https://github.com/run-ai/genv) and rntop - start building your models faster!
+
+- Installation and setup support as well as best practice tips and tricks directly for your use-case
+- Discuss possible features
+- Monthly Beers with Engineers sessions with industry experts
+- Networking events
+- and many more...
 
 ## Troubleshooting
 ### Local
