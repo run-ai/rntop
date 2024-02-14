@@ -1,6 +1,8 @@
 # rntop
 [![Join the community at (https://discord.gg/zN3Q9pQAuT)](https://img.shields.io/badge/Discord-genv-7289da?logo=discord)](https://discord.gg/zN3Q9pQAuT)
 
+⛔️ DEPRECATED: The capabilities of this project is migrated into [Genv](https://docs.genv.dev/remote/monitoring.html). Rntop is no longer supported, please consider using [Genv](https://github.com/run-ai/genv) instead.
+
 A top-like tool for monitoring GPUs across a cluster.
 
 ## Board for `rntop`
